@@ -1,6 +1,6 @@
 /*
 Input: Lammps configuration dump with: id x y vx vy diameter
-Output: For each timestep, N, Wfg and pressure for each pedestrian
+Output: For each timestep, N, Wfg and pressure (helbing social force) for each pedestrian
 */
 #include <iostream>
 #include <fstream>
