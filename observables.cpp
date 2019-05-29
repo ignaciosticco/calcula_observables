@@ -17,11 +17,8 @@ using namespace std;
 #define MOT 			 140.0
 #define KAPPA 			 240000.0
 
-
-//void escribir(vector<double> &vector_time,vector<int> &vector_N, vector<double> &vector_density,int n_samples);
 void escribir(int cantAtoms,double time,vector<int> &vector_id, vector<double> &observable_1, vector<double> &observable_2);
 void calcula_presion(vector<double> &vector_x,vector<double> &vector_y,int cantAtoms,vector<double> &vector_presion,vector<double> &vector_diameter);
-void calcula_target(double x, double y,vector<double> &versor_target,double x_door, double y_opening1,double y_opening2);
 void calcula_work_desired_force(vector<double> &vector_x, vector<double> &vector_y,vector<double> &vector_pre_x, vector<double> &vector_pre_y,vector<double> &vector_vx,vector<double> &vector_vy,vector<double> &vector_pre_vx,vector<double> &vector_pre_vy,int cantAtoms,vector<double> &vector_w_desired,vector<int> &vector_id,vector<int> &vector_pre_id);
 int esta_en(int id,vector<int> &vector_pre_id,int cantAtoms);
 void calcula_work_granular_force(vector<double> &vector_x, vector<double> &vector_y,vector<double> &vector_pre_x, vector<double> &vector_pre_y,vector<double> &vector_vx,vector<double> &vector_vy,vector<double> &vector_pre_vx,vector<double> &vector_pre_vy, int cantAtoms,vector<double> &vector_w_granular,vector<int> &vector_id,vector<int> &vector_pre_id,vector<double> &vector_diameter);
@@ -37,15 +34,13 @@ double vd = 1.0;
 int cantAtoms_inicial;		
 
 int main(int argc, char const *argv[]){
-	int n_samples = 0;
 
 	string archivoDatos;
-	double x,y,vx,vy,id,time,T,diameter;
+	double x,y,vx,vy,id,time,diameter;
 	cout<<"Enter configuration file: "<<endl;	
 	cin>>archivoDatos;
-	//archivoDatos = "config_vd6_kix10_kwx10_panel_e";
 	
-	y_wall_up= 24.0;
+	y_wall_up=24.0;
 	y_wall_down=0.0;
 	x_door=27.0;
 	cantAtoms_inicial=1300;
@@ -73,13 +68,11 @@ int main(int argc, char const *argv[]){
 		getline(fileIn,line,'I');
 		n_time=atoi(line.c_str());
 		time = n_time*INTEGRATION_STEP;
-		//vector_time.push_back(n_time*INTEGRATION_STEP);
 		getline(fileIn,line,'S');
 		getline(fileIn,line,'I');
 		cantAtoms=atoi(line.c_str());
-		//vector_N.push_back(cantAtoms);
 		getline(fileIn,line,'y');
-		getline(fileIn,line,'r');		// ultima letra es r (de diameter)
+		getline(fileIn,line,'r');// ultima letra en tabla configuraciones es r (de diameter)
 		getline(fileIn,line,' ');
 
 		vector<int> vector_id;
@@ -88,7 +81,6 @@ int main(int argc, char const *argv[]){
 		vector<double> vector_vx;
 		vector<double> vector_vy;
 		vector<double> vector_diameter;
-		//vector<double> vector_T;
 		vector<double> vector_presion(cantAtoms, 0.0);
 
 
@@ -118,7 +110,7 @@ int main(int argc, char const *argv[]){
 
 		calcula_presion(vector_x, vector_y,cantAtoms,vector_presion,vector_diameter);
 		
-		//// Calculo de trabajos ////
+		//// Calculo de trabajos ////////
 		if (iter>0){
 			calcula_work_granular_force(vector_x, vector_y,vector_pre_x, vector_pre_y,vector_vx,vector_vy,vector_pre_vx,vector_pre_vy,cantAtoms,vector_w_granular,vector_id,vector_pre_id,vector_diameter);
 		}	
@@ -137,16 +129,14 @@ int main(int argc, char const *argv[]){
 		escribir(cantAtoms,time,vector_id,vector_w_granular,vector_presion);
 	}
 
-	//double ex = 0.0;
-	//double ey = 0.0;
 
 }
 
 
 void calcula_work_granular_force(vector<double> &vector_x, vector<double> &vector_y,vector<double> &vector_pre_x, vector<double> &vector_pre_y,vector<double> &vector_vx,vector<double> &vector_vy,vector<double> &vector_pre_vx,vector<double> &vector_pre_vy, int cantAtoms,vector<double> &vector_w_granular,vector<int> &vector_id,vector<int> &vector_pre_id,vector<double> &vector_diameter){
 
-	int id, i_pre;
-	double fgx, fgy,fgx_pre, fgy_pre,delx,dely,dfdx,dfdy;
+	int    id, i_pre;
+	double delx,dely,dfdx,dfdy;
 
 	for (int i = 0; i < cantAtoms; ++i){
 		id = vector_id[i];
@@ -212,7 +202,7 @@ void calcula_granular_force(vector<double> &vector_fg,vector<double> &vector_x, 
 void escribir(int cantAtoms,double time,vector<int> &vector_id ,vector<double> &observable_1,vector<double> &observable_2){
 	
 	FILE *fp;
-	fp=fopen("output_observables.txt","a");
+	fp=fopen("output_observables.txt","w");
 	fprintf(fp,"Cantidad de peatones = %i \n",cantAtoms);
 	fprintf(fp,"tiempo = %lg \n",time);
 	for (int i = 0; i < cantAtoms; ++i){
@@ -222,38 +212,11 @@ void escribir(int cantAtoms,double time,vector<int> &vector_id ,vector<double> &
 }
 
 
-void calcula_target(double x, double y,vector<double> &versor_target,double x_door, double y_opening1,double y_opening2){
-
-	double delx,dely,dist_door,ex,ey;
-	delx = x_door - x;
-
-	ex = 0.0;
-	ey = 0.0;
-
-	if (y <= y_opening1){
-		dely = y-y_opening1;
-		dist_door = sqrt((delx*delx) + (dely*dely) );
-		ex = (x_door - x)/dist_door;
-		ey = (y_opening1 - y)/dist_door;
-	}
-	else if (y>= y_opening2){
-		dely = y-y_opening2;
-		dist_door = sqrt((delx*delx) + (dely*dely) );
-		ex = (x_door - x)/dist_door;
-		ey = (y_opening2 - y)/dist_door;
-	}
-	else if (y > y_opening1 and y < y_opening2){
-		ex = 1.0;
-		ey = 0.0;
-	}
-	versor_target[0] = ex;
-	versor_target[1] = ey;
-}
-
-  
 int esta_en(int id,vector<int> &vector_pre_id,int cantAtoms){
-// Esta funcion encuentra el indice del vector_id previo tal que su id coincide con el id del 
-// de la particula a la que se le quiere calcular el trabajo. 
+	/*
+	Esta funcion encuentra el indice del vector_id previo tal que su id coincide
+	con el id del de la particula a la que se le quiere calcular el trabajo. 
+	*/
 
 	int i=0;
 	int i_pre = -1;
@@ -274,40 +237,30 @@ int esta_en(int id,vector<int> &vector_pre_id,int cantAtoms){
 
 
 void calcula_presion(vector<double> &vector_x,vector<double> &vector_y,int cantAtoms,vector<double> &vector_presion,vector<double> &vector_diameter){
-	int j,i;
-	double xi,xj,yi,yj,dist2,diam,fs,r,sum_rads,ex,ey,delx,dely,fx,fy;
-	vector<double> vector_fx(cantAtoms, 0.0);
-	vector<double> vector_fy(cantAtoms, 0.0);
-	vector<double> versor_target(cantAtoms, 0.0);
+	/*
+	Calcula la presion de compresion de cada individuo. El output es un vector
+	de presiones (cada elemento corresponde a un individuo). 
+	*/
+	double xi,xj,yi,yj,dist2,fs,r,sum_rads,delx,dely;
+	int    j;
 	for (int i = 0; i < cantAtoms; ++i){
 		xi = vector_x[i];
 		yi = vector_y[i];
-		calcula_target(xi,yi,versor_target,x_door,y_opening1,y_opening2);
-		ex = versor_target[0];
-		ey = versor_target[1];
 		j = i+1;
 		while(j<cantAtoms){
 			xj = vector_x[j];
 			yj = vector_y[j];
 			delx = xi-xj;
-			dely = yi-yj;
-			
+			dely = yi-yj;	
 			sum_rads = (vector_diameter[i]+vector_diameter[j])/2.0;
 			dist2 = delx*delx+dely*dely;
-			fx = 0.0;
-			fy = 0.0;	
 			if (dist2<sum_rads*sum_rads){
 				r = sqrt(dist2);	
 				fs = A*exp((sum_rads-r)/B) - A;
-				fx = fs*delx/r;
-				fy = fs*dely/r;
-				vector_fx[i] += fx;
-				vector_fy[i] += fy;
-				vector_fx[j] -= fx;
-				vector_fy[j] -= fy;
+				vector_presion[i] += fs; 
+				vector_presion[j] += fs; 
 			}
 			j++;
 		}
-		vector_presion[i] = fabs(vector_fx[i]*ex + vector_fy[i]*ey);
 	}
 }
