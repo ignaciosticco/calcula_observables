@@ -187,15 +187,6 @@ void calcula_granular_force(vector<double> &vector_fg,vector<double> &vector_x, 
 		}
 		j++;
 	}
-	//// Calculo del rozamiento con las paredes (paredes horizontales-pasillo-) ///
-	if (yi > y_wall_up-vector_diameter[id]/2.0){
-	    vector_fg[0] +=- KAPPA*vxi*(vector_diameter[id]/2.0-(y_wall_up-yi));
-	    vector_fg[1] += 0.0;		
-	}
-	if (yi < y_wall_down+vector_diameter[id]/2.0){
-	   	vector_fg[0] +=- KAPPA*vxi*(vector_diameter[id]/2.0-(yi-y_wall_down)); 
-	   	vector_fg[1] += 0.0;		
-	}
 }
 
 
