@@ -158,7 +158,7 @@ void calcula_work_granular_force(vector<double> &vector_x, vector<double> &vecto
 }
 
 void calcula_granular_force(vector<double> &vector_fg,vector<double> &vector_x, vector<double> &vector_y, vector<double> &vector_vx,vector<double> &vector_vy, int cantAtoms,vector<double> &vector_diameter,double id){
- 
+   
 	double xi,yi,xj,yj,vxi,vyi,vxj,vyj,delx,dely,delvx,delvy,sum_rads,r,gpair,granular_factor,rsq;
 
 	xi = vector_x[id];
