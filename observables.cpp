@@ -193,7 +193,7 @@ void calcula_granular_force(vector<double> &vector_fg,vector<double> &vector_x, 
 void escribir(int cantAtoms,double time,vector<int> &vector_id ,vector<double> &observable_1,vector<double> &observable_2){
 	
 	FILE *fp;
-	fp=fopen("output_observables.txt","w");
+	fp=fopen("output_observables.txt","a");
 	fprintf(fp,"Cantidad de peatones = %i \n",cantAtoms);
 	fprintf(fp,"tiempo = %lg \n",time);
 	for (int i = 0; i < cantAtoms; ++i){
