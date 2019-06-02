@@ -7,6 +7,7 @@ import pylab
 import numpy as np
 import math
 import pandas as pd
+import sys
 
 ######################### PARAMETER #########################
 begin_corridor = 0.0
@@ -15,11 +16,15 @@ wall_up = 24.0
 wall_down = 0.0
 lenght_x = end_corridor-begin_corridor
 lenght_y = wall_up-wall_down
-#############################################################   
 
 
+######################### ARGUMENTS #########################   
 
-######################## Functions ######################## 
+data_config = sys.argv[1]
+data_observables = sys.argv[2]
+output_file_name = sys.argv[3]
+
+######################## Functions ########################## 
 
 
 def calculate_density(data):
@@ -109,19 +114,11 @@ def create_density_matrx(x,y):
 
 
 ########################  MAIN  ########################
-def main():
+def main(data_config,data_observables,output_file_name):
      '''
-     Create matrices with X Y and average pressure per person per 1 square meter
+     calculates density and pressure (avg, max and std)
+     outputs table with the corresponding values
      '''
-
-     ################## IMPORTATION ################## 
-
-     #data_config = input("Enter configurations file name:\n")
-     #data_observables = input("Enter file with observables:\n") 
-     #output_file_name = input("Enter output file name:\n")
-     data_config = "config.txt"
-     data_observables = "output_observables.txt" 
-     output_file_name = "xsxs"
      mean_density,max_density,std_density = calculate_density(data_config)
      time,number_pedestrians,avg_pressure,max_pressure,std_pressure = calculate_pressure(data_observables)
 
@@ -140,4 +137,4 @@ def main():
     ,columns=["time","number_pedestrians","avg_pressure","std_pressure","max_pressure","mean_density","std_density","max_density"])
 
 if __name__=='__main__':
-     main()
+     main(data_config,data_observables,output_file_name)
