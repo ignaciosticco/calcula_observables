@@ -27,12 +27,12 @@ def calculate_density(data):
      this function extracts the configuration for each timestep
      and calculates de mean density and max density for each timestep
      '''
-     #str_n='{}\n'.format(n)
      f=open(data, 'r')
      lines=f.readlines()
      i=0
      mean_density = []
      max_density = []
+     std_density = []
      while i<len(lines):
           line = lines[i].rstrip('\n')
           if(line=='ITEM: NUMBER OF ATOMS'):
@@ -49,10 +49,11 @@ def calculate_density(data):
                density_matrix = create_density_matrx(x,y)
                density_matrix[density_matrix == 0] = np.nan
                mean_density += [np.nanmean(density_matrix)]
+               std_density += [np.nanstd(density_matrix)]
                max_density += [int(np.nanmax(density_matrix))]
           i+=1
      f.close()
-     return mean_density,max_density
+     return mean_density,max_density,std_density
 
 
 def calculate_pressure(data):
@@ -67,6 +68,7 @@ def calculate_pressure(data):
      time = []
      avg_pressure = []
      max_pressure = []
+     std_pressure = []
      i=0
      while i<len(lines):
           index=[]
@@ -87,10 +89,11 @@ def calculate_pressure(data):
                     number_pedestrians += [n]
                     time += [t]
                     avg_pressure += [np.mean(pressure)]
+                    std_pressure += [np.std(pressure)]
                     max_pressure += [np.max(pressure)]
           i+=1
      f.close()
-     return time,number_pedestrians,avg_pressure,max_pressure
+     return time,number_pedestrians,avg_pressure,max_pressure,std_pressure
 
 def create_density_matrx(x,y):
      grid_x = np.linspace(begin_corridor,end_corridor,end_corridor-begin_corridor)
@@ -113,23 +116,28 @@ def main():
 
      ################## IMPORTATION ################## 
 
-     data_config = input("Enter configurations file name:\n")
-     data_observables = input("Enter file with observables:\n") 
-     output_file_name = input("Enter output file name:\n")
-     mean_density,max_density = calculate_density(data_config)
-     time,number_pedestrians,avg_pressure,max_pressure = calculate_pressure(data_observables)
+     #data_config = input("Enter configurations file name:\n")
+     #data_observables = input("Enter file with observables:\n") 
+     #output_file_name = input("Enter output file name:\n")
+     data_config = "config.txt"
+     data_observables = "output_observables.txt" 
+     output_file_name = "xsxs"
+     mean_density,max_density,std_density = calculate_density(data_config)
+     time,number_pedestrians,avg_pressure,max_pressure,std_pressure = calculate_pressure(data_observables)
 
      ################################################# 
      d = {'time': time,
           'number_pedestrians':number_pedestrians,
           'avg_pressure':np.round(avg_pressure,2),
+          'std_pressure':np.round(std_pressure,2),
           'max_pressure': np.round(max_pressure,2),
           'max_density': np.round(max_density,2),
           'mean_density': np.round(mean_density,2),
+          'std_density': np.round(std_density,2)
           }
      df = pd.DataFrame(data=d)
      df.to_csv("{}".format(output_file_name), sep='\t',index = False
-    ,columns=["time","number_pedestrians","avg_pressure","max_pressure","max_density","mean_density"])
+    ,columns=["time","number_pedestrians","avg_pressure","std_pressure","max_pressure","mean_density","std_density","max_density"])
 
 if __name__=='__main__':
      main()
