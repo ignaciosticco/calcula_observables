@@ -20,9 +20,9 @@ lenght_y = wall_up-wall_down
 
 ######################### ARGUMENTS #########################   
 
-data_config = sys.argv[1]
-data_observables = sys.argv[2]
-output_file_name = sys.argv[3]
+#data_config = sys.argv[1]
+#data_observables = sys.argv[2]
+#output_file_name = sys.argv[3]
 
 ######################## Functions ########################## 
 
@@ -137,4 +137,5 @@ def main(data_config,data_observables,output_file_name):
     ,columns=["time","number_pedestrians","avg_pressure","std_pressure","max_pressure","mean_density","std_density","max_density"])
 
 if __name__=='__main__':
-     main(data_config,data_observables,output_file_name)
+     #main(data_config,data_observables,output_file_name)
+     main(sys.argv[1],sys.argv[2],sys.argv[3])
